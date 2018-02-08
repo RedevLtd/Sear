@@ -4,6 +4,12 @@ Sear is a bare bones application to provide simple alerting for ElasticSearch. I
 
 Currently only Slack is supported, but new action can be easily added.
 
+## Installation
+
+### Docker
+
+	docker run sear	
+
 ## Example Configuration
 
 Below is an example Sear Alert config, the Query is sent to your ES server as define.
