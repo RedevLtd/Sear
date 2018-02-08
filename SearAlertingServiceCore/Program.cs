@@ -25,7 +25,7 @@ namespace SearAlertingServiceCore
 
             _logger.Info("SearAlertingService Starting");
 
-            string alertsFolder = string.IsNullOrWhiteSpace(args[0]) ? "Alerts" : args[0];
+            string alertsFolder = (args.Length > 0 && !string.IsNullOrWhiteSpace(args[0])) ? args[0] : "Alerts";
             _logger.InfoFormat("Looking for Alert configs in: {0}", alertsFolder);
 
             foreach (var file in Directory.GetFiles(alertsFolder))
