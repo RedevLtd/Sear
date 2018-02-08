@@ -1,10 +1,10 @@
-##Simple ElasticSearch Alerting by Redev
+## Simple ElasticSearch Alerting by Redev
 
 Sear is a bare bones application to provide simple alerting for ElasticSearch. It simply queries your ES data, as defined in an Alert config, when the query hits are higher or lower than the specified threshold an action is performed.
 
 Currently only Slack is supported, but new action can be easily added.
 
-##Example Configuration
+## Example Configuration
 
 Below is an example Sear Alert config, the Query is sent to your ES server as define.
 
