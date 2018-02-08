@@ -13,7 +13,7 @@ namespace SearAlertingServiceCore.Actions
             using (WebClient client = new WebClient())
             {
                 NameValueCollection data = new NameValueCollection();
-                data["payload"] = String.Format("{ \"text\": \"{0}\r\n\r\n<{1}|Click here> for details!\", \"username\": \"Sear Alert Bot\"}", message, link);
+                data["payload"] = "{ \"text\": \"" + message + "\r\n\r\n<" + link + "|Click here> for details!\", \"username\": \"Sear Alert Bot\"}";
                 client.UploadValues(slackUrl, "POST", data);
             }
 
