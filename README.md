@@ -8,7 +8,7 @@ Currently only Slack is supported, but new actions can easily be added.
 
 ### Docker
 
-	docker run sear	
+	docker run -v /home/sear/alerts/:/app/Alerts sear
 
 ## Example Configuration
 
