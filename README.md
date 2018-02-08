@@ -2,7 +2,7 @@
 
 Sear is a bare bones application to provide simple alerting for ElasticSearch. It simply queries your ES data, as defined in an Alert config, when the query hits are higher or lower than the specified threshold an action is performed.
 
-Currently only Slack is supported, but new action can be easily added.
+Currently only Slack is supported, but new actions can easily be added.
 
 ## Installation
 
@@ -13,6 +13,8 @@ Currently only Slack is supported, but new action can be easily added.
 ## Example Configuration
 
 Below is an example Sear Alert config, the Query is sent to your ES server as define.
+
+Once the number of hits exceeds `9` within the last `10` minutes, an alert will be sent.
 
 	<Alert>
 		<Name>SMS Errors</Name>
