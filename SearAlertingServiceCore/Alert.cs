@@ -16,6 +16,7 @@ namespace SearAlertingServiceCore
         public ActionType ActionType { get; set; }
         public string ActionConfig { get; set; }
         public string Link { get; set; }
+        public string MessagePrefix { get; set; }
         public bool Triggered { get; set; }
     }
 

@@ -74,7 +74,7 @@ namespace SearAlertingServiceCore
                         _logger.Info("------------------------------------");
                         _logger.InfoFormat("{0} - Hits: {1}\r\n", alert.Name, resultHits);
 
-                        string message = string.Format("Alert: {0} Triggered!\r\n\r\n Hits: {1} exceeded the threshold {2}", alert.Name, resultHits, alert.Hits);
+                        string message = string.Format("{0}Alert: {1} Triggered!\r\n\r\n Hits: {2} exceeded the threshold {3}", alert.MessagePrefix, alert.Name, resultHits, alert.Hits);
 
                         if (alert.Triggered) // dont want to alert again
                         {
