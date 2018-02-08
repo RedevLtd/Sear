@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <Content Include="Alerts\AppTrackerSyncCount.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Include="Alerts\PipedriveSyncErrors.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
