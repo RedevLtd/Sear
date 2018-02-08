@@ -16,6 +16,8 @@ Below is an example Sear Alert config, the Query is sent to your ES server as de
 
 Once the number of hits exceeds `9` within the last `10` minutes, an alert will be sent.
 
+The interval is set via a standard cron definition.
+
 	<Alert>
 		<Name>SMS Errors</Name>
 		 <Interval>* * * * *</Interval>
