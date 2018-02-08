@@ -4,7 +4,6 @@ WORKDIR /app
 # copy csproj and restore as distinct layers
 COPY *.sln ./
 COPY ./SearAlertingServiceCore/*.csproj ./SearAlertingServiceCore/
-COPY ./SearAlertingSystemCore/*.csproj ./SearAlertingSystemCore/
 RUN dotnet restore
 
 # copy everything else and build
