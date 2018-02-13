@@ -60,6 +60,7 @@ The interval is set via a standard cron definition.
 
 ### Todo
 
+- [ ] Alert on resolved/improved
 - [ ] Email Alert Action
 - [ ] Web Dashboard
 - [ ] Add/Remove/Modify alert rules while running
