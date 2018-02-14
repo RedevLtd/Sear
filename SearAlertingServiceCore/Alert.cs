@@ -17,7 +17,20 @@ namespace SearAlertingServiceCore
         public string ActionConfig { get; set; }
         public string Link { get; set; }
         public string MessagePrefix { get; set; }
-        public bool Triggered { get; set; }
+        public bool HasTriggered { get; set; }
+        public bool AlertOnImproved { get; set; }
+
+
+        public bool Triggered(long resultHits)
+        {
+            if (HitType == HitType.Higher)
+                return resultHits > Hits;
+            else if (HitType == HitType.Lower)
+                return resultHits < Hits;
+
+            return false;
+        }
+
     }
 
     public enum ActionType

@@ -14,11 +14,13 @@ namespace SearAlertingServiceCore
     {
         public bool stopped = true;
 
-        private static List<Alert> _alerts;
-        private static readonly log4net.ILog _logger = LogManager.GetLogger(typeof(SearClient));
+        private readonly SearConfig _config;
+        private List<Alert> _alerts;
+        private readonly log4net.ILog _logger = LogManager.GetLogger(typeof(SearClient));
 
-        public SearClient(List<Alert> alerts)
+        public SearClient(SearConfig config, List<Alert> alerts)
         {
+            _config = config;
             _alerts = alerts;
             _logger.InfoFormat("Sear Client setup with {0} alerts", _alerts.Count);
         }
@@ -58,41 +60,44 @@ namespace SearAlertingServiceCore
         {
             try
             {
-                using (WebClient client = new WebClient())
+                long resultHits = PerformElasticRequest(alert);
+
+                if (alert.Triggered(resultHits)) // check if triggered
                 {
-                    // make elasticsearch request
-                    client.Headers.Add("Content-Type", "application/json");
-                    var result = client.UploadString(alert.Host + "/" + alert.Index + "/_search", alert.Query);
-                    var json = JsonConvert.DeserializeObject<dynamic>(result);
+                    // execute Action
+                    _logger.Info("Alert Triggered!");
+                    _logger.Info("------------------------------------");
+                    _logger.InfoFormat("{0} - Hits: {1}\r\n", alert.Name, resultHits);
 
-                    long resultHits = json.hits.total;
+                    string message = string.Format("{0}Alert: {1} Triggered!\r\n\r\n Hits: {2} exceeded the threshold {3}", alert.MessagePrefix, alert.Name, resultHits, alert.Hits);
 
-                    if (alert.HitType == HitType.Higher ? resultHits > alert.Hits : resultHits < alert.Hits) // check if triggered
+                    if (alert.HasTriggered) // dont want to alert again
                     {
-                        // execute Action
-                        _logger.Info("Alert Triggered!");
-                        _logger.Info("------------------------------------");
-                        _logger.InfoFormat("{0} - Hits: {1}\r\n", alert.Name, resultHits);
+                        _logger.Debug("Already triggered, not sending alerts");
+                        return;
+                    }
 
-                        string message = string.Format("{0}Alert: {1} Triggered!\r\n\r\n Hits: {2} exceeded the threshold {3}", alert.MessagePrefix, alert.Name, resultHits, alert.Hits);
+                    if (alert.ActionType == ActionType.Slack)
+                        SlackAction.Execute(alert.ActionConfig, message, alert.Link);
 
-                        if (alert.Triggered) // dont want to alert again
-                        {
-                            _logger.Debug("Already triggered, not sending alerts");
-                            return;
-                        }
+                    alert.HasTriggered = true;
+                }
+                else // we didnt trigger
+                {
+                    if (alert.HasTriggered && alert.AlertOnImproved) // if the alert was previously triggered and flag set to alert on improved
+                    {
+                        _logger.InfoFormat("Alert {0} has improved", alert.Name);
+
+                        string message = string.Format("{0}Alert: {1} has Improved!\r\n\r\n Hits: {2} now within the threshold {3}", alert.MessagePrefix, alert.Name, resultHits, alert.Hits);
 
                         if (alert.ActionType == ActionType.Slack)
                             SlackAction.Execute(alert.ActionConfig, message, alert.Link);
+                    }
 
-                        alert.Triggered = true;
-                    }
-                    else
-                    {
-                        _logger.DebugFormat("Ran Alert: {0}. Did not trigger. ActualValue: {1}, TriggerValue: {2}", alert.Name, resultHits, alert.Hits);
-                        alert.Triggered = false;
-                    }
+                    _logger.DebugFormat("Ran Alert: {0}. Did not trigger. ActualValue: {1}, TriggerValue: {2}", alert.Name, resultHits, alert.Hits);
+                    alert.HasTriggered = false;
                 }
+
             }
             catch (Exception ex)
             {
@@ -105,5 +110,22 @@ namespace SearAlertingServiceCore
             stopped = true;
         }
 
+        /// <summary>
+        /// performs the ES query and returns the number of hits
+        /// </summary>
+        /// <param name="alert"></param>
+        /// <returns></returns>
+        private long PerformElasticRequest(Alert alert)
+        {
+            using (WebClient client = new WebClient())
+            {
+                // make elasticsearch request
+                client.Headers.Add("Content-Type", "application/json");
+                var result = client.UploadString(alert.Host + "/" + alert.Index + "/_search", alert.Query);
+                var json = JsonConvert.DeserializeObject<dynamic>(result);
+
+                return json.hits.total;
+            }
+        }
     }
 }
