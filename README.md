@@ -57,3 +57,12 @@ The interval is set via a standard cron definition.
 		 <ActionConfig>https://hooks.slack.com/services/<SlackHookToken></ActionConfig>
 		 <Link>http://linktoyourviz.co.uk</Link>  
 	</Alert>
+
+### Todo
+
+- [ ] Alert on resolved/improved
+- [ ] Email Alert Action
+- [ ] Web Dashboard
+- [ ] Add/Remove/Modify alert rules while running
+- [ ] Spike trigger type
+- [ ] Better docs :)
