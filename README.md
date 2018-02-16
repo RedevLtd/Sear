@@ -53,7 +53,9 @@ The interval is set via a standard cron definition.
 		 </Query>
 		 <Hits>9</Hits>
 		 <HitType>Higher</HitType>
+		 <AlertOnImproved>false</AlertOnImproved>
 		 <ActionType>Slack</ActionType>
+		 <MessagePrefix><![CDATA[<@everyone> ]]></MessagePrefix>
 		 <ActionConfig>https://hooks.slack.com/services/<SlackHookToken></ActionConfig>
 		 <Link>http://linktoyourviz.co.uk</Link>  
 	</Alert>
@@ -63,6 +65,8 @@ The interval is set via a standard cron definition.
 - [x] Alert on resolved/improved
 - [ ] Email Alert Action
 - [ ] Web Dashboard
+- [ ] Specific configs for alert actions
 - [ ] Add/Remove/Modify alert rules while running
 - [ ] Spike trigger type
+- [ ] Prevent alert spam (multiple on/off trigger messages in short time window)
 - [ ] Better docs :)

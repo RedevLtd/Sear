@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -11,6 +12,7 @@ namespace SearAlertingServiceCore
         public string AlertsFolderPath { get; set; } = "Alerts";       
 
         private const string CONFIG_FILE_PATH = "SearConfig.config";
+        private static readonly log4net.ILog _logger = LogManager.GetLogger(typeof(SearConfig));
 
         public static SearConfig ReadConfig()
         {
@@ -28,7 +30,7 @@ namespace SearAlertingServiceCore
             }
             catch(Exception ex)
             {
-
+                _logger.Error("Error reading SearConfig. Error: " + ex.Message, ex);
             }
 
             return new SearConfig();

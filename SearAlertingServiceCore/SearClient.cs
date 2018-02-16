@@ -91,7 +91,7 @@ namespace SearAlertingServiceCore
                         string message = string.Format("{0}Alert: {1} has Improved!\r\n\r\n Hits: {2} now within the threshold {3}", alert.MessagePrefix, alert.Name, resultHits, alert.Hits);
 
                         if (alert.ActionType == ActionType.Slack)
-                            SlackAction.Execute(alert.ActionConfig, message, alert.Link);
+                            SlackAction.Execute(alert.ActionConfig, message, alert.Link, false);
                     }
 
                     _logger.DebugFormat("Ran Alert: {0}. Did not trigger. ActualValue: {1}, TriggerValue: {2}", alert.Name, resultHits, alert.Hits);
