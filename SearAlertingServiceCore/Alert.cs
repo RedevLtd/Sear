@@ -18,6 +18,7 @@ namespace SearAlertingServiceCore
         public string Link { get; set; }
         public string MessagePrefix { get; set; }
         public bool HasTriggered { get; set; }
+        public DateTime? WhenTriggered { get; set; }
         public bool AlertOnImproved { get; set; }       
 
 

@@ -71,7 +71,7 @@ namespace SearAlertingServiceCore
 
                     string message = string.Format("{0}Alert: {1} Triggered!\r\n\r\n Hits: {2} exceeded the threshold {3}", alert.MessagePrefix, alert.Name, resultHits, alert.Hits);
 
-                    if (alert.HasTriggered) // dont want to alert again
+                    if (alert.HasTriggered && (alert.WhenTriggered == null || alert.WhenTriggered > DateTime.UtcNow.AddDays(-1))) // dont want to alert again unless its been 24 hours
                     {
                         _logger.Debug("Already triggered, not sending alerts");
                         return;
@@ -81,6 +81,7 @@ namespace SearAlertingServiceCore
                         SlackAction.Execute(alert.ActionConfig, message, alert.Link);
 
                     alert.HasTriggered = true;
+                    alert.WhenTriggered = DateTime.UtcNow;
                 }
                 else // we didnt trigger
                 {
@@ -96,6 +97,7 @@ namespace SearAlertingServiceCore
 
                     _logger.DebugFormat("Ran Alert: {0}. Did not trigger. ActualValue: {1}, TriggerValue: {2}", alert.Name, resultHits, alert.Hits);
                     alert.HasTriggered = false;
+                    alert.WhenTriggered = null;
                 }
 
             }
