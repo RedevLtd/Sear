@@ -9,25 +9,11 @@
   <ItemGroup>
     <None Remove="Alerts\AppTrackerSyncCount.xml" />
     <None Remove="Alerts\PipedriveSyncErrors.xml" />
-    <None Remove="Alerts\SmsErrors.xml" />
-    <None Remove="Alerts\TestAlert.json" />
     <None Remove="Web\Index.cshtml" />
     <None Remove="Web\_alert.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Alerts\AppTrackerSyncCount.xml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Alerts\PipedriveSyncErrors.xml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Alerts\SmsErrors.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Alerts\TestAlert.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Web\Index.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -46,12 +32,6 @@
 
   <ItemGroup>
     <None Update="Alerts\.gitignore">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Alerts\PipedriveSyncCount.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Alerts\UnknownVPN.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="log4net.config">
