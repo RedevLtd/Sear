@@ -81,7 +81,7 @@ Multiple actions can be defined for an alert. Currently Slack, Email (via SendGr
 
 #### Email (SendGrid)
 
-	Multiple `To` emails can be defined, seperated with a semi-colon
+Multiple `To` emails can be defined, seperated with a semi-colon
 
     {
 		"$type": "SearAlertingServiceCore.Actions.SendGridEmailAction, SearAlertingServiceCore",
@@ -93,7 +93,7 @@ Multiple actions can be defined for an alert. Currently Slack, Email (via SendGr
 
 #### SMS (AQL)
 
-	Multiple `Numbers` can be defined
+Multiple `Numbers` can be defined
 
     {
         "$type": "SearAlertingServiceCore.Actions.AqlSmsAction, SearAlertingServiceCore",
