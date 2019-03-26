@@ -10,7 +10,7 @@ namespace SearAlertingServiceCore.Web
     public class SearWeb
     {
         private static IRazorLightEngine _engine = new RazorLightEngineBuilder()
-            .UseFilesystemProject(Directory.GetCurrentDirectory() + "\\Web")
+            .UseFilesystemProject(Directory.GetCurrentDirectory() + "/Web")
             .Build();
 
         public static string Index(List<Alert> alerts)
