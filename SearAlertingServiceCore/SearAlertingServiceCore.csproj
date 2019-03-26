@@ -3,12 +3,16 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+	<PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Alerts\AppTrackerSyncCount.xml" />
     <None Remove="Alerts\PipedriveSyncErrors.xml" />
     <None Remove="Alerts\SmsErrors.xml" />
+    <None Remove="Alerts\TestAlert.json" />
+    <None Remove="Web\Index.cshtml" />
+    <None Remove="Web\_alert.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +23,16 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Include="Alerts\SmsErrors.xml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Alerts\TestAlert.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Web\Index.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Web\_alert.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
@@ -27,9 +40,20 @@
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="ncrontab" Version="3.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1-beta3" />
+    <PackageReference Include="RazorLight" Version="2.0.0-beta1" />
+    <PackageReference Include="Sendgrid" Version="9.10.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Alerts\.gitignore">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Alerts\PipedriveSyncCount.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Alerts\UnknownVPN.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

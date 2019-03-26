@@ -3,9 +3,12 @@ using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
+using SearAlertingServiceCore.Actions;
 
 namespace SearAlertingServiceCore
 {
@@ -26,14 +29,10 @@ namespace SearAlertingServiceCore
             _logger.Info("SearAlertingService Starting");           
             _logger.InfoFormat("Looking for Alert configs in: {0}", config.AlertsFolderPath);
 
-            List<Alert> alerts = ReadAlerts(config.AlertsFolderPath);
+            List <Alert> alerts = ReadAlerts(config.AlertsFolderPath);
 
             if (alerts.Count == 0)
-            {
                 _logger.Error("Found no valid Alert rules. Exiting....");
-                Environment.ExitCode = -1;
-                return;
-            }
 
             SearClient sc = new SearClient(config, alerts);
             sc.Start();
@@ -41,8 +40,7 @@ namespace SearAlertingServiceCore
             Console.CancelKeyPress += (o, e) =>
             {
                 Console.WriteLine("Exit");
-
-                // Allow the manin thread to continue and exit...
+                // Allow the main thread to continue and exit...
                 waitHandle.Set();
             };
 
@@ -59,21 +57,17 @@ namespace SearAlertingServiceCore
         private static List<Alert> ReadAlerts(string alertsFolderPath)
         {
             List<Alert> alerts = new List<Alert>();
-            foreach (var file in Directory.GetFiles(alertsFolderPath))
+            foreach (var file in Directory.GetFiles(alertsFolderPath).Where(t => t.ToLower().EndsWith(".json")))
             {
                 try
                 {
-                    if (file.EndsWith(".xml"))
-                    {
-                        XmlSerializer serializer = new XmlSerializer(typeof(Alert));
-                        StreamReader reader = new StreamReader(file);
-                        var alert = (Alert)serializer.Deserialize(reader);
-                        reader.Close();
+                    Alert alert = JsonConvert.DeserializeObject<Alert>(File.ReadAllText(file),
+                        new JsonSerializerSettings() {TypeNameHandling = TypeNameHandling.Auto});
 
-                        _logger.InfoFormat("Adding Alert: {0}, Interval: {1}, ActionType: {2}", alert.Name, alert.Interval, alert.ActionType);
+                    _logger.InfoFormat("Adding Alert: {0}, Interval: {1}, ActionType: {2}", alert.Name, alert.Interval,
+                        alert.Actions[0].ActionType);
+                    alerts.Add(alert);
 
-                        alerts.Add(alert);
-                    }
                 }
                 catch (Exception ex)
                 {

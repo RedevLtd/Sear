@@ -1,0 +1,25 @@
+﻿@model SearAlertingServiceCore.Alert
+
+<div class="col-sm-3" style="margin: 5px; border: 2px solid black">
+    <h4>@Model.Name</h4>
+    
+    <div>
+        Interval: @Model.Interval <br />
+        Trigger: @Model.HitType than @Model.Hits <br />
+        Status: @(Model.HasTriggered ? "Triggered" : "Not Triggered") <br />
+        <a title="@(Model.SimpleQuery != null ? Model.SimpleQuery.ToString() : Model.AdvancedQuery)">Query</a> <br />
+        
+        <div>
+            <h5>Actions:</h5>
+            
+            @foreach (var action in Model.Actions)
+            {
+                @: <a title="@action.ToString()">@action.ActionType</a> - Escalation: @action.EscalationTimeSpan mins <br />
+            }
+
+        </div>
+
+    </div>
+    
+
+</div>

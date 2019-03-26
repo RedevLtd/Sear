@@ -7,31 +7,34 @@ using System.Text;
 
 namespace SearAlertingServiceCore.Actions
 {
-    public static class SlackAction
+    public class SlackAction : Action
     {
-        public static bool Execute(string slackUrl, string message, string link, bool fail = true)
+        public string MessagePrefix { get; set; }
+        public string SlackUrl { get; set; }
+
+        public SlackAction()
         {
+            base.ActionType = "Slack";
+        }
+
+        public override void Execute(string message, string name, bool failure = true)
+        {
+            base.Execute(message, name);
+
             Payload payload = new Payload()
             {
-                text = String.Format("{0}\r\n\r\n<{1}|Click Here> for details!", message, link),
+                text = String.Format("{0} {1}\r\n\r\n<{2}|Click Here> for details!", MessagePrefix, message, Link),
                 username = "Sear Alert Bot",
-                icon_emoji = fail ? ":fire:" : ":sunglasses:"
+                icon_emoji = failure ? ":fire:" : ":sunglasses:"
             };
 
             using (WebClient client = new WebClient())
             {
                 NameValueCollection data = new NameValueCollection();
                 data["payload"] = JsonConvert.SerializeObject(payload);
-                client.UploadValues(slackUrl, "POST", data);
+                client.UploadValues(SlackUrl, "POST", data);
             }
-
-            return true;
         }
-    }
-
-    public class SlackConfig
-    {
-        public string SlackUrl { get; set; }
     }
 
     public class Payload

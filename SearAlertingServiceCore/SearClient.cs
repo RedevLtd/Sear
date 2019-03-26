@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using SearAlertingServiceCore.Web;
 
 namespace SearAlertingServiceCore
 {
@@ -17,14 +18,21 @@ namespace SearAlertingServiceCore
         private readonly SearConfig _config;
         private List<Alert> _alerts;
         private readonly log4net.ILog _logger = LogManager.GetLogger(typeof(SearClient));
+        private WebServer _webServer;
 
         public SearClient(SearConfig config, List<Alert> alerts)
         {
             _config = config;
             _alerts = alerts;
             _logger.InfoFormat("Sear Client setup with {0} alerts", _alerts.Count);
+
+            _webServer = new WebServer(SendResponse, "http://localhost:8080/");
         }
 
+        public string SendResponse(HttpListenerRequest request)
+        {
+            return SearWeb.Index(_alerts);
+        }
 
         /// <summary>
         /// run every minute, check for any alerts due to be ran
@@ -51,11 +59,15 @@ namespace SearAlertingServiceCore
 
         public void Start()
         {
+            _webServer.Run();
             stopped = false;
             Task.Run(() => { Run(); });
         }
 
-
+        /// <summary>
+        /// Executes this alert
+        /// </summary>
+        /// <param name="alert"></param>
         public void ExecuteAlert(Alert alert)
         {
             try
@@ -65,41 +77,21 @@ namespace SearAlertingServiceCore
                 if (alert.Triggered(resultHits)) // check if triggered
                 {
                     // execute Action
-                    _logger.Info("Alert Triggered!");
-                    _logger.Info("------------------------------------");
-                    _logger.InfoFormat("{0} - Hits: {1}\r\n", alert.Name, resultHits);
-
-                    string message = string.Format("{0}Alert: {1} Triggered!\r\n\r\n Hits: {2} exceeded the threshold {3}", alert.MessagePrefix, alert.Name, resultHits, alert.Hits);
-
-                    if (alert.HasTriggered && (alert.WhenTriggered == null || alert.WhenTriggered > DateTime.UtcNow.AddDays(-1))) // dont want to alert again unless its been 24 hours
-                    {
-                        _logger.Debug("Already triggered, not sending alerts");
-                        return;
-                    }
-
-                    if (alert.ActionType == ActionType.Slack)
-                        SlackAction.Execute(alert.ActionConfig, message, alert.Link);
-
+                    _logger.InfoFormat("\r\nAlert Triggered!\r\n------------------------------------\r\n{0} - Hits: {1}\r\n", alert.Name, resultHits);
                     alert.HasTriggered = true;
-                    alert.WhenTriggered = DateTime.UtcNow;
+
+                    if(alert.WhenTriggered == null)
+                        alert.WhenTriggered = DateTime.UtcNow;
+
+                    alert.ExecuteAlert(resultHits, true);
                 }
                 else // we didnt trigger
                 {
-                    if (alert.HasTriggered && alert.AlertOnImproved) // if the alert was previously triggered and flag set to alert on improved
-                    {
-                        _logger.InfoFormat("Alert {0} has improved", alert.Name);
-
-                        string message = string.Format("{0}Alert: {1} has Improved!\r\n\r\n Hits: {2} now within the threshold {3}", alert.MessagePrefix, alert.Name, resultHits, alert.Hits);
-
-                        if (alert.ActionType == ActionType.Slack)
-                            SlackAction.Execute(alert.ActionConfig, message, alert.Link, false);
-                    }
-
-                    _logger.DebugFormat("Ran Alert: {0}. Did not trigger. ActualValue: {1}, TriggerValue: {2}", alert.Name, resultHits, alert.Hits);
+                    _logger.DebugFormat("\r\nRan Alert: {0}. Did not trigger. ActualValue: {1}, TriggerValue: {2}", alert.Name, resultHits, alert.Hits);
                     alert.HasTriggered = false;
                     alert.WhenTriggered = null;
+                    alert.ExecuteAlert(resultHits, false);
                 }
-
             }
             catch (Exception ex)
             {
@@ -109,6 +101,7 @@ namespace SearAlertingServiceCore
 
         public void Stop()
         {
+            _webServer.Stop();
             stopped = true;
         }
 
@@ -117,17 +110,60 @@ namespace SearAlertingServiceCore
         /// </summary>
         /// <param name="alert"></param>
         /// <returns></returns>
-        private long PerformElasticRequest(Alert alert)
+        public long PerformElasticRequest(Alert alert)
         {
             using (WebClient client = new WebClient())
             {
                 // make elasticsearch request
                 client.Headers.Add("Content-Type", "application/json");
-                var result = client.UploadString(alert.Host + "/" + alert.Index + "/_search", alert.Query);
+
+                string query = alert.AdvancedQuery;
+                if (alert.SimpleQuery != null)
+                    query = BuildSimpleQuery(alert.SimpleQuery);
+                
+
+                var result = client.UploadString(alert.Host + "/" + alert.Index + "/_search", query);
                 var json = JsonConvert.DeserializeObject<dynamic>(result);
 
                 return json.hits.total;
             }
+        }
+
+        /// <summary>
+        /// Builds up an ES json query string using the simple query variables
+        /// </summary>
+        /// <param name="simpleQuery"></param>
+        /// <returns></returns>
+        private string BuildSimpleQuery(SimpleQuery simpleQuery)
+        {
+            string query = @"{
+            ""query"": {
+                ""bool"": {
+                    ""must"": [
+                    {
+                        ""query_string"": {
+                            ""query"": """ + simpleQuery.SearchQuery + @""",
+                            ""analyze_wildcard"": true,
+                            ""default_field"": ""*""
+                        }
+                    },
+                    {
+                        ""range"": {
+                            ""@timestamp"": {
+                                ""gte"": """ + simpleQuery.TimeSpan + @""",
+                                ""lte"": ""now""
+                            }
+                        }
+                    }
+                    ],
+                    ""filter"": [],
+                    ""should"": [],
+                    ""must_not"": []
+                }
+            }
+        }";
+
+            return query;
         }
     }
 }
