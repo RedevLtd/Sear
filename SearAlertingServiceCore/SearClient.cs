@@ -26,7 +26,7 @@ namespace SearAlertingServiceCore
             _alerts = alerts;
             _logger.InfoFormat("Sear Client setup with {0} alerts", _alerts.Count);
 
-            _webServer = new WebServer(SendResponse, "http://localhost:8080/");
+            _webServer = new WebServer(SendResponse, "http://*:8080/");
         }
 
         public string SendResponse(HttpListenerRequest request)
