@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 using RazorLight;
 
 
@@ -17,7 +17,7 @@ namespace SearAlertingServiceCore.Web
         {
             try
             {
-                var result = _engine.CompileRenderAsync("Index.cshtml", alerts).Result;
+                var result = _engine.CompileRenderAsync("Index.cshtml", alerts.OrderByDescending(t => t.HasTriggered).ToList()).Result;
                 return result;
             }
             catch (Exception e)

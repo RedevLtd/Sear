@@ -10,14 +10,10 @@
     <None Remove="Alerts\AppTrackerSyncCount.xml" />
     <None Remove="Alerts\PipedriveSyncErrors.xml" />
     <None Remove="Web\Index.cshtml" />
-    <None Remove="Web\_alert.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Web\Index.cshtml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Web\_alert.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

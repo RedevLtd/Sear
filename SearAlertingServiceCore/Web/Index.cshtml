@@ -21,10 +21,35 @@
         </div>
 
         <div class="row">
+            
+            <h2>@Model.Count Alerts</h2>
 
             @foreach (var alert in Model)
             {
-                await IncludeAsync("_alert.cshtml", alert);
+                <div class="col-sm-3" style="margin: 5px; border: 2px solid @Raw(alert.HasTriggered ? "red": "black"); min-height: 250px">
+                    <h4>@alert.Name</h4>
+
+                    <div>
+                        Interval: @alert.Interval <br/>
+                        Trigger: @alert.HitType than @alert.Hits <br/>
+                        Status: @(alert.HasTriggered ? "Triggered" : "Not Triggered") <br/>
+                        <a title="@(alert.SimpleQuery != null ? alert.SimpleQuery.ToString() : alert.AdvancedQuery)">Query</a> <br/>
+
+                        <div>
+                            <h5>Actions:</h5>
+
+                            @foreach (var action in alert.Actions)
+                            {
+                                @: <a title="@action.ToString()">@action.ActionType</a> - Escalation: @action.EscalationTimeSpan mins <br/>
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
             }
 
         </div>
