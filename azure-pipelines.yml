@@ -25,4 +25,4 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-
+- task: DownloadBuildArtifacts@0
