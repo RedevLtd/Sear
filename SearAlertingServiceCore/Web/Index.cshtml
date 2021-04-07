@@ -27,7 +27,7 @@
 
             @foreach (var alert in Model)
             {
-                <div class="col-sm-4" style="margin: 5px; border: 2px solid @Raw(alert.HasTriggered ? "red": "black"); min-height: 250px">
+                <div class="col-sm-3" style="margin: 5px; border: 2px solid @Raw(alert.HasTriggered ? "red": "black"); min-height: 250px">
                     <h4>@alert.Name</h4>
 
                     <div>
