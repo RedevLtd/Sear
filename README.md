@@ -2,7 +2,7 @@
 
 Sear is a bare bones application to provide simple alerting for ElasticSearch. It simply queries your ES data, as defined in an Alert config, when the query hits are higher or lower than the specified threshold an action is performed.
 
-![](TeamsAlert.JPG)
+![Example Teams Alert](https://raw.githubusercontent.com/RedevLtd/Sear/master/TeamsAlert.PNG)
 
 ## Installation
 
