@@ -2,6 +2,7 @@
 
 <html>
 <head>
+    <title>SEAR Alerts</title>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
 
@@ -30,17 +31,21 @@
                     <h4>@alert.Name</h4>
 
                     <div>
-                        Interval: @alert.Interval <br/>
-                        Trigger: @alert.HitType than @alert.Hits <br/>
-                        Status: @(alert.HasTriggered ? "Triggered" : "Not Triggered") <br/>
-                        <a title="@(alert.SimpleQuery != null ? alert.SimpleQuery.ToString() : alert.AdvancedQuery)">Query</a> <br/>
+                        Interval: @alert.Interval <br />
+                        Trigger: @alert.HitType than @alert.Hits <br />
+                        Status: @(alert.HasTriggered ? "Triggered" : "Not Triggered") <br />
+                        <a title="@(alert.SimpleQuery != null ? alert.SimpleQuery.ToString() : alert.AdvancedQuery)">Query</a> <br />
 
                         <div>
                             <h5>Actions:</h5>
 
                             @foreach (var action in alert.Actions)
                             {
-                                @: <a title="@action.ToString()">@action.ActionType</a> - Escalation: @action.EscalationTimeSpan mins <br/>
+                                @: <a title="@action.ToString()">@action.ActionType</a> - Escalation: @action.EscalationTimeSpan mins <br />
+                                @if (string.IsNullOrWhiteSpace(action.Link) == false)
+                                {
+                                    <a href="@action.Link">Link</a>
+                                }
                             }
 
                         </div>
