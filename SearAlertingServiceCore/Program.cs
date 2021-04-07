@@ -65,7 +65,7 @@ namespace SearAlertingServiceCore
                         new JsonSerializerSettings() {TypeNameHandling = TypeNameHandling.Auto});
 
                     _logger.InfoFormat("Adding Alert: {0}, Interval: {1}, ActionType: {2}", alert.Name, alert.Interval,
-                        alert.Actions[0].ActionType);
+                        String.Join(", ",alert.Actions.Select(t => t.ActionType)));
                     alerts.Add(alert);
 
                 }
