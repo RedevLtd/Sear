@@ -27,7 +27,7 @@
 
             @foreach (var alert in Model)
             {
-                <div class="col-sm-3" style="margin: 5px; border: 2px solid @Raw(alert.HasTriggered ? "red": "black"); min-height: 250px">
+                <div class="col-sm-4" style="margin: 5px; border: 2px solid @Raw(alert.HasTriggered ? "red": "black"); min-height: 250px">
                     <h4>@alert.Name</h4>
 
                     <div>
@@ -41,11 +41,7 @@
 
                             @foreach (var action in alert.Actions)
                             {
-                                @: <a title="@action.ToString()">@action.ActionType</a> - Escalation: @action.EscalationTimeSpan mins <br />
-                                @if (string.IsNullOrWhiteSpace(action.Link) == false)
-                                {
-                                    <a href="@action.Link">Link</a>
-                                }
+                                @: <a title="@action.ToString()">@action.ActionType</a> [<a href="@action.Link">*</a>] - Escalation: @action.EscalationTimeSpan mins <br />
                             }
 
                         </div>
