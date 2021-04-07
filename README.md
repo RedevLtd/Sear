@@ -2,6 +2,8 @@
 
 Sear is a bare bones application to provide simple alerting for ElasticSearch. It simply queries your ES data, as defined in an Alert config, when the query hits are higher or lower than the specified threshold an action is performed.
 
+![](TeamsAlert.JPG)
+
 ## Installation
 
 ### Docker
@@ -18,7 +20,7 @@ For example a timespan of `0` would send the action immediately, a timespan of `
 
 The interval is set via a standard cron definition.
 
-For most alerts you can define the 'SimpleQuery' object, this has properties for the search text of your query and the tiemspan to look back for. If this is defined then the `AdvancedQuery` will be ignored, you only need one defined unlike the example.
+For most alerts you can define the 'SimpleQuery' object, this has properties for the search text of your query and the timespan to look back for. If this is defined then the `AdvancedQuery` will be ignored, you only need one defined unlike the example.
 
 The `AdvancedQuery` allows you to define a more complex ElasticSearch query. In the example below both the simple and advanced queries would return the same results.
 
@@ -79,6 +81,15 @@ Multiple actions can be defined for an alert. Currently Slack, Email (via SendGr
         "Link": "http://linktoyourviz.co.uk"
      }
 
+#### Teams
+
+    {
+        "$type": "SearAlertingServiceCore.Actions.TeamsAction, SearAlertingServiceCore",        
+        "TeamsUrl": "<TeamsIncomingWebhookUrl>",
+        "EscalationTimeSpan": 0,
+        "Link": "http://linktoyourviz.co.uk"
+     }
+
 #### Email (SendGrid)
 
 Multiple `To` emails can be defined, seperated with a semi-colon
@@ -86,8 +97,8 @@ Multiple `To` emails can be defined, seperated with a semi-colon
     {
 		"$type": "SearAlertingServiceCore.Actions.SendGridEmailAction, SearAlertingServiceCore",
 		"SendGridApiKey": "<SendGridEmailAccessToken>",
-		"To": "info@redev.co.uk",
-		"From": "info@redev.co.uk;support@redev.co.uk",
+		"To": "info@redev.co.uk;support@redev.co.uk",
+		"From": "info@redev.co.uk",
 		"EscalationTimeSpan": 0
     }
 
