@@ -48,38 +48,45 @@ namespace SearAlertingServiceCore
         /// <param name="failure"></param>
         public void ExecuteAlert(long resultHits, bool failure = true)
         {
-            if (failure)
+            try
             {
-                string message = string.Format("Alert: {0} Triggered!\r\n\r\n Hits: {1} exceeded the threshold {2}", Name, resultHits, Hits);
-              
-                // reset after a day, as alert has been ignored.
-                if (WhenTriggered < DateTime.UtcNow.AddDays(-1))
+                if (failure)
                 {
-                    WhenTriggered = DateTime.UtcNow;
-                    Actions.Select(t => { t.SetHasExecuted(false); return t;}).ToList(); // reset all actions
+                    string message = string.Format("Alert: {0} Triggered!\r\n\r\n Hits: {1} exceeded the threshold {2}", Name, resultHits, Hits);
+
+                    // reset after a day, as alert has been ignored.
+                    if (WhenTriggered < DateTime.UtcNow.AddDays(-1))
+                    {
+                        WhenTriggered = DateTime.UtcNow;
+                        Actions.Select(t => { t.SetHasExecuted(false); return t;}).ToList(); // reset all actions
+                    }
+
+                    // get every action where the timespan for escalation is less than the current triggered period
+                    // i.e. an action might want to be triggered if the current failure has been triggered for over 60mins
+                    var actions = Actions.Where(t => (DateTime.UtcNow - WhenTriggered.Value).TotalMinutes >= t.EscalationTimeSpan && t.GetHasExecuted() == false);
+
+                    foreach (var action in actions)
+                        action.Execute(message, Name);
                 }
+                else
+                {
+                    if (HasTriggered && AlertOnImproved) // if the alert was previously triggered and flag set to alert on improved
+                    {
+                        _logger.InfoFormat("Alert {0} has improved", Name);
 
-                // get every action where the timespan for escalation is less than the current triggered period
-                // i.e. an action might want to be triggered if the current failure has been triggered for over 60mins
-                var actions = Actions.Where(t => (DateTime.UtcNow - WhenTriggered.Value).TotalMinutes >= t.EscalationTimeSpan && t.GetHasExecuted() == false);
+                        string message = string.Format("Alert: {0} has Improved!\r\n\r\n Hits: {1} now within the threshold {2}", Name, resultHits, Hits);
 
-                foreach (var action in actions)
-                    action.Execute(message, Name);
+                        foreach (var action in Actions)
+                            action.Execute(message, Name, false);
+                    }
+
+                    WhenTriggered = null;
+                    HasTriggered = false;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                if (HasTriggered && AlertOnImproved) // if the alert was previously triggered and flag set to alert on improved
-                {
-                    _logger.InfoFormat("Alert {0} has improved", Name);
-
-                    string message = string.Format("Alert: {0} has Improved!\r\n\r\n Hits: {1} now within the threshold {2}", Name, resultHits, Hits);
-
-                    foreach (var action in Actions)
-                       action.Execute(message, Name, false);
-                }
-
-                WhenTriggered = null;
-                HasTriggered = false;
+                _logger.Error($"ExecuteAlert() Alert: {Name} failed to trigger. Error: {ex.Message}", ex);
             }
         }
 
