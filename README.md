@@ -25,49 +25,49 @@ For most alerts you can define the 'SimpleQuery' object, this has properties for
 The `AdvancedQuery` allows you to define a more complex ElasticSearch query. In the example below both the simple and advanced queries would return the same results.
 
 	{
-    "Name": "Test Alert",
-    "Interval": "* * * * *",
-    "Host": "http://localhost:9200",
-    "Index": "logstash-*",
-    "AdvancedQuery": "{\"query\":{\"bool\":{\"must\":[{\"query_string\":{\"query\":\"MessageObject.MetricType: \\\"SyncStats\\\"\",\"analyze_wildcard\":true,\"default_field\":\"*\"}},{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true,\"default_field\":\"*\"}},{\"match_phrase\":{\"MessageObject.MetricType\":{\"query\":\"SyncStats\"}}},{\"range\":{\"@timestamp\":{\"gte\":\"now-30m\",\"lte\":\"now\"}}}],\"filter\":[],\"should\":[],\"must_not\":[]}}}",
-    "SimpleQuery": {
-        "SearchQuery": "MessageObject.MetricType: \\\"SyncStats\\\"",
-        "TimeSpan": "now-30m"
-    },
-    "HitType": "Lower",
-    "Hits": 100,
-    "Actions": [
-        {
-            "$type": "SearAlertingServiceCore.Actions.SendGridEmailAction, SearAlertingServiceCore",
-            "SendGridApiKey": "<SendGridEmailAccessToken>",
-            "To": "info@redev.co.uk",
-            "From": "info@redev.co.uk",
-            "EscalationTimeSpan": 0
-        },        
-        {
-            "$type": "SearAlertingServiceCore.Actions.SlackAction, SearAlertingServiceCore",
-            "MessagePrefix": "<@here>",
-            "SlackUrl": "https://hooks.slack.com/services/<SlackHookToken>",
-            "EscalationTimeSpan": 0,
-            "Link": "http://linktoyourviz.co.uk"
-        }
-        {
-            "$type": "SearAlertingServiceCore.Actions.SlackAction, SearAlertingServiceCore",
-            "MessagePrefix": "<@everyone> Alert has been triggered for over an hour!",
-            "SlackUrl": "https://hooks.slack.com/services/<SlackHookToken>",
-            "EscalationTimeSpan": 60,
-            "Link": "http://linktoyourviz.co.uk"
-        }
+	    "Name": "Test Alert",
+	    "Interval": "* * * * *",
+	    "Host": "http://localhost:9200",
+	    "Index": "logstash-*",
+	    "AdvancedQuery": "{\"query\":{\"bool\":{\"must\":[{\"query_string\":{\"query\":\"MessageObject.MetricType: \\\"SyncStats\\\"\",\"analyze_wildcard\":true,\"default_field\":\"*\"}},{\"query_string\":{\"query\":\"*\",\"analyze_wildcard\":true,\"default_field\":\"*\"}},{\"match_phrase\":{\"MessageObject.MetricType\":{\"query\":\"SyncStats\"}}},{\"range\":{\"@timestamp\":{\"gte\":\"now-30m\",\"lte\":\"now\"}}}],\"filter\":[],\"should\":[],\"must_not\":[]}}}",
+	    "SimpleQuery": {
+		"SearchQuery": "MessageObject.MetricType: \\\"SyncStats\\\"",
+		"TimeSpan": "now-30m"
+	    },
+	    "HitType": "Lower",
+	    "Hits": 100,
+	    "Actions": [
+		{
+		    "$type": "SearAlertingServiceCore.Actions.SendGridEmailAction, SearAlertingServiceCore",
+		    "SendGridApiKey": "<SendGridEmailAccessToken>",
+		    "To": "info@redev.co.uk",
+		    "From": "info@redev.co.uk",
+		    "EscalationTimeSpan": 0
+		},        
+		{
+		    "$type": "SearAlertingServiceCore.Actions.SlackAction, SearAlertingServiceCore",
+		    "MessagePrefix": "<@here>",
+		    "SlackUrl": "https://hooks.slack.com/services/<SlackHookToken>",
+		    "EscalationTimeSpan": 0,
+		    "Link": "http://linktoyourviz.co.uk"
+		}
+		{
+		    "$type": "SearAlertingServiceCore.Actions.SlackAction, SearAlertingServiceCore",
+		    "MessagePrefix": "<@everyone> Alert has been triggered for over an hour!",
+		    "SlackUrl": "https://hooks.slack.com/services/<SlackHookToken>",
+		    "EscalationTimeSpan": 60,
+		    "Link": "http://linktoyourviz.co.uk"
+		}
 
-    ],    
-    "HasTriggered": false,
-    "WhenTriggered": null,
-    "AlertOnImproved": false
-}
+	    ],    
+	    "HasTriggered": false,
+	    "WhenTriggered": null,
+	    "AlertOnImproved": false
+	}
 
 ### Actions
 
-Multiple actions can be defined for an alert. Currently Slack, Email (via SendGrid) and SMS (via AQL) actions are supported, below are example configs of each.
+Multiple actions can be defined for an alert. Currently Slack, Teams, Email (via SendGrid) and SMS (via AQL) actions are supported, below are example configs of each.
 
 `EscalationTimeSpan` This defines how many minutes SEAR will wait since the alert first triggered before firing this action. e.g. a value of `60` would only fire the action if the alert had been triggering continuously for over an hour. `0` would fire the action immediately.
 
