@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.12" />
     <PackageReference Include="ncrontab" Version="3.3.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.1-beta3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="RazorLight" Version="2.0.0-beta1" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
   </ItemGroup>
